@@ -6,42 +6,13 @@ package englishgen
 
 import (
 	"math/rand"
+	"strconv"
 	"strings"
 )
 
 // Generate a natural word len.
 func genWordLen() int {
-	f := rand.Float32() * 100
-	// a table of word lengths and their frequencies.
-	switch {
-	case f < 1.939:
-		return 1
-	case f < 19.01:
-		return 2
-	case f < 38.00:
-		return 3
-	case f < 50.41:
-		return 4
-	case f < 61.00:
-		return 5
-	case f < 70.09:
-		return 6
-	case f < 78.97:
-		return 7
-	case f < 85.65:
-		return 8
-	case f < 90.87:
-		return 9
-	case f < 95.05:
-		return 10
-	case f < 97.27:
-		return 11
-	case f < 98.67:
-		return 12
-	case f < 100.0:
-		return 13
-	}
-	return 2 // shouldn't get here
+	return rand.Intn(wordLenMax) + 1
 }
 
 func intRange(min, max int) int {
@@ -59,21 +30,13 @@ func word(wordLen int) string {
 	if wordLen < 1 {
 		wordLen = 1
 	}
-	if wordLen > 13 {
-		wordLen = 13
+	if wordLen > wordLenMax {
+		wordLen = wordLenMax
 	}
 
-	n := rand.Int() % len(wordlist)
-	for {
-		if n >= len(wordlist)-1 {
-			n = 0
-		}
-		if len(wordlist[n]) == wordLen {
-			return wordlist[n]
-		}
-		n++
-	}
-	return ""
+	words, _ := wordMapByLen.Load(strconv.Itoa(wordLen))
+
+	return words[rand.Intn(len(words))]
 }
 
 // Generate a word in a specfied range of letters.
@@ -91,7 +54,7 @@ func Sentence(min, max int) string {
 	maxcommas := 2
 	numcomma := 0
 	for i := 0; i < n; i++ {
-		ws = append(ws, (word(genWordLen())))
+		ws = append(ws, word(genWordLen()))
 
 		// maybe insert a comma, if there are currently < 2 commas, and
 		// the current word is not the last or first
@@ -110,7 +73,7 @@ func Sentence(min, max int) string {
 // Generate a paragraph with a specified range of sentenences.
 const (
 	minwords = 5
-	maxwords = 22
+	maxwords = 30
 )
 
 func Paragraph(min, max int) string {
