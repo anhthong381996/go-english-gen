@@ -1,10 +1,12 @@
-Generate lorem ipsum for your project.
+Generate real english words for your project.
+
+Words file: /usr/share/dict/words (~250000 words)
 
 =============
 
 Usage
 -----
-import "lorem"
+import "englishgen"
 
 
 Ranged generators
